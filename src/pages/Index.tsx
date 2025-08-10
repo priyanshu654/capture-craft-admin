@@ -1,12 +1,40 @@
-// Update this page (the content is just a fallback if you fail to update the page)
+import Navbar from "@/components/portfolio/Navbar";
+import Hero from "@/components/portfolio/Hero";
+import AboutSection from "@/components/portfolio/AboutSection";
+import ServicesSection from "@/components/portfolio/ServicesSection";
+import GallerySection from "@/components/portfolio/GallerySection";
+import ContactSection from "@/components/portfolio/ContactSection";
+import Footer from "@/components/portfolio/Footer";
 
 const Index = () => {
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'Person',
+    name: 'Ava Carter',
+    jobTitle: 'Photographer',
+    url: '/',
+    sameAs: [
+      'https://instagram.com/',
+      'https://behance.net/',
+      'https://pinterest.com/',
+    ],
+  };
+
   return (
-    <div className="min-h-screen flex items-center justify-center bg-background">
-      <div className="text-center">
-        <h1 className="text-4xl font-bold mb-4">Welcome to Your Blank App</h1>
-        <p className="text-xl text-muted-foreground">Start building your amazing project here!</p>
-      </div>
+    <div className="min-h-screen bg-background text-foreground">
+      <Navbar />
+      <main>
+        <Hero />
+        <AboutSection />
+        <ServicesSection />
+        <GallerySection />
+        <ContactSection />
+      </main>
+      <Footer />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
     </div>
   );
 };
