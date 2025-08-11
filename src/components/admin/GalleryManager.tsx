@@ -1,33 +1,78 @@
+import { useEffect, useRef, useState } from "react";
 import SectionCard from "./SectionCard";
 import { Button } from "@/components/ui/button";
 import { Plus, Image as ImageIcon } from "lucide-react";
-import gallery1 from "@/assets/gallery1-portraits.jpg";
-import gallery2 from "@/assets/gallery2-portraits.jpg";
-import gallery3 from "@/assets/gallery1-nature.jpg";
-import gallery4 from "@/assets/gallery2-nature.jpg";
-import gallery5 from "@/assets/gallery1-wedding.jpg";
-import gallery6 from "@/assets/gallery1-events.jpg";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 
-const images = [gallery1, gallery2, gallery3, gallery4, gallery5, gallery6];
+interface GalleryItem { id: string; image_url: string; category: string; caption: string | null; }
 
 const GalleryManager = () => {
+  const [items, setItems] = useState<GalleryItem[]>([]);
+  const [loading, setLoading] = useState(true);
+  const fileRef = useRef<HTMLInputElement | null>(null);
+
+  const load = async () => {
+    setLoading(true);
+    const { data, error } = await supabase
+      .from("gallery_images")
+      .select("id,image_url,category,caption")
+      .order("sort_order", { ascending: true })
+      .order("created_at", { ascending: false });
+    if (error) toast.error(error.message);
+    setItems(data || []);
+    setLoading(false);
+  };
+
+  useEffect(() => { load(); }, []);
+
+  const upload = async (file: File, category: string) => {
+    const path = `gallery/${Date.now()}-${file.name}`;
+    const { error } = await supabase.storage.from("public-assets").upload(path, file, { upsert: true });
+    if (error) throw error;
+    const { data } = supabase.storage.from("public-assets").getPublicUrl(path);
+    const payload: any = { image_url: data.publicUrl, category };
+    const { error: insErr } = await (supabase
+      .from("gallery_images") as any)
+      .insert([payload]);
+    if (insErr) throw insErr;
+  };
+  const onPickFile = () => fileRef.current?.click();
+
+  const onFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const f = e.target.files?.[0];
+    if (!f) return;
+    const category = prompt("Enter category: Nature, Wedding, Portraits, Events", "Portraits") || "Portraits";
+    try {
+      await upload(f, category);
+      toast.success("Image uploaded");
+      load();
+    } catch (err: any) {
+      toast.error(err.message || "Upload failed");
+    } finally {
+      e.currentTarget.value = "";
+    }
+  };
+
   return (
     <SectionCard
       id="gallery"
       title="Portfolio Gallery"
       description="Upload new photos, organize by category, and manage your work."
-      actions={<Button variant="secondary" type="button"><Plus className="mr-2" /> Upload</Button>}
+      actions={<Button variant="secondary" type="button" onClick={onPickFile}><Plus className="mr-2" /> Upload</Button>}
     >
+      <input ref={fileRef} type="file" accept="image/*" hidden onChange={onFileChange} />
       <div className="mb-4 flex items-center gap-2 text-sm text-muted-foreground">
         <ImageIcon className="h-4 w-4" />
         <span>Preview of your current gallery</span>
       </div>
+      {loading && <p className="text-sm text-muted-foreground">Loading…</p>}
       <div className="grid grid-cols-2 gap-3 md:grid-cols-3 lg:grid-cols-4">
-        {images.map((src, idx) => (
-          <div key={idx} className="overflow-hidden rounded-md border">
+        {items.map((it) => (
+          <div key={it.id} className="overflow-hidden rounded-md border">
             <img
-              src={src}
-              alt={`Portfolio image ${idx + 1}`}
+              src={it.image_url}
+              alt={it.caption || `${it.category} image`}
               className="aspect-square w-full object-cover"
               loading="lazy"
             />

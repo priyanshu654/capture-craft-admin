@@ -1,4 +1,5 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { supabase } from "@/integrations/supabase/client";
 import g1n from "@/assets/gallery1-nature.jpg";
 import g2n from "@/assets/gallery2-nature.jpg";
 import g1w from "@/assets/gallery1-wedding.jpg";
@@ -7,7 +8,7 @@ import g2p from "@/assets/gallery2-portraits.jpg";
 import g1e from "@/assets/gallery1-events.jpg";
 import g2e from "@/assets/gallery2-events.jpg";
 
-const items = [
+const fallbackItems = [
   { src: g1n, alt: "Misty mountain landscape at sunrise", category: "Nature" },
   { src: g2n, alt: "Macro leaf with dew drops", category: "Nature" },
   { src: g1w, alt: "Wedding rings and hands detail", category: "Wedding" },
@@ -21,11 +22,38 @@ const categories = ["All", "Nature", "Wedding", "Portraits", "Events"] as const;
 
 type Category = (typeof categories)[number];
 
+interface GalleryRow { image_url: string; caption: string | null; category: string; }
+
 const GallerySection = () => {
   const [active, setActive] = useState<Category>("All");
+  const [items, setItems] = useState<{ src: string; alt: string; category: string }[]>(fallbackItems);
+
+  useEffect(() => {
+    let mounted = true;
+    const load = async () => {
+      const { data, error } = await supabase
+        .from("gallery_images")
+        .select("image_url, caption, category")
+        .order("sort_order", { ascending: true })
+        .order("created_at", { ascending: false });
+      if (!mounted || error) return;
+      if (data && data.length > 0) {
+        setItems(
+          data.map((r: GalleryRow) => ({
+            src: r.image_url,
+            alt: r.caption || `${r.category} photo`,
+            category: r.category,
+          }))
+        );
+      }
+    };
+    load();
+    return () => { mounted = false; };
+  }, []);
+
   const filtered = useMemo(
     () => (active === "All" ? items : items.filter((i) => i.category === active)),
-    [active]
+    [active, items]
   );
 
   return (

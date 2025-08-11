@@ -1,17 +1,28 @@
 import { FormEvent, useState } from "react";
 import { toast } from "sonner";
+import { supabase } from "@/integrations/supabase/client";
 
 const ContactSection = () => {
   const [submitting, setSubmitting] = useState(false);
 
   const onSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    const form = e.currentTarget;
+    const formData = new FormData(form);
+    const name = String(formData.get("name") || "");
+    const email = String(formData.get("email") || "");
+    const message = String(formData.get("message") || "");
     setSubmitting(true);
-    // Placeholder: will submit to backend once Supabase is connected
-    setTimeout(() => {
-      setSubmitting(false);
+    try {
+      const { error } = await supabase.from("leads").insert({ name, email, message });
+      if (error) throw error;
       toast.success("Message sent! I’ll be in touch shortly.");
-    }, 800);
+      form.reset();
+    } catch (err: any) {
+      toast.error(err.message || "Failed to send message.");
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
