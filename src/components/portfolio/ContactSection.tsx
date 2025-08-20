@@ -14,7 +14,7 @@ const ContactSection = () => {
     const message = String(formData.get("message") || "");
     setSubmitting(true);
     try {
-      const { error } = await supabase.from("leads").insert({ name, email, message });
+      const { error } = await supabase.from("leads" as any).insert({ name, email, message });
       if (error) throw error;
       toast.success("Message sent! I’ll be in touch shortly.");
       form.reset();
