@@ -7,187 +7,14 @@ export type Json =
   | Json[]
 
 export type Database = {
-  // Allows to automatically instanciate createClient with right options
+  // Allows to automatically instantiate createClient with right options
   // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
   __InternalSupabase: {
     PostgrestVersion: "13.0.4"
   }
   public: {
     Tables: {
-      about_settings: {
-        Row: {
-          bio: string | null
-          created_at: string
-          id: number
-          portrait_url: string | null
-          updated_at: string
-        }
-        Insert: {
-          bio?: string | null
-          created_at?: string
-          id?: number
-          portrait_url?: string | null
-          updated_at?: string
-        }
-        Update: {
-          bio?: string | null
-          created_at?: string
-          id?: number
-          portrait_url?: string | null
-          updated_at?: string
-        }
-        Relationships: []
-      }
-      contact_info: {
-        Row: {
-          autoresponder_template: string | null
-          created_at: string
-          email: string | null
-          facebook: string | null
-          id: number
-          instagram: string | null
-          phone: string | null
-          twitter: string | null
-          updated_at: string
-        }
-        Insert: {
-          autoresponder_template?: string | null
-          created_at?: string
-          email?: string | null
-          facebook?: string | null
-          id?: number
-          instagram?: string | null
-          phone?: string | null
-          twitter?: string | null
-          updated_at?: string
-        }
-        Update: {
-          autoresponder_template?: string | null
-          created_at?: string
-          email?: string | null
-          facebook?: string | null
-          id?: number
-          instagram?: string | null
-          phone?: string | null
-          twitter?: string | null
-          updated_at?: string
-        }
-        Relationships: []
-      }
-      gallery_images: {
-        Row: {
-          caption: string | null
-          category: Database["public"]["Enums"]["gallery_category"]
-          created_at: string
-          id: string
-          image_url: string
-          sort_order: number
-          updated_at: string
-        }
-        Insert: {
-          caption?: string | null
-          category: Database["public"]["Enums"]["gallery_category"]
-          created_at?: string
-          id?: string
-          image_url: string
-          sort_order?: number
-          updated_at?: string
-        }
-        Update: {
-          caption?: string | null
-          category?: Database["public"]["Enums"]["gallery_category"]
-          created_at?: string
-          id?: string
-          image_url?: string
-          sort_order?: number
-          updated_at?: string
-        }
-        Relationships: []
-      }
-      hero_settings: {
-        Row: {
-          created_at: string
-          id: number
-          image_url: string | null
-          name: string | null
-          tagline: string | null
-          updated_at: string
-        }
-        Insert: {
-          created_at?: string
-          id?: number
-          image_url?: string | null
-          name?: string | null
-          tagline?: string | null
-          updated_at?: string
-        }
-        Update: {
-          created_at?: string
-          id?: number
-          image_url?: string | null
-          name?: string | null
-          tagline?: string | null
-          updated_at?: string
-        }
-        Relationships: []
-      }
-      leads: {
-        Row: {
-          created_at: string
-          email: string
-          id: string
-          message: string
-          name: string
-          status: string
-        }
-        Insert: {
-          created_at?: string
-          email: string
-          id?: string
-          message: string
-          name: string
-          status?: string
-        }
-        Update: {
-          created_at?: string
-          email?: string
-          id?: string
-          message?: string
-          name?: string
-          status?: string
-        }
-        Relationships: []
-      }
-      services: {
-        Row: {
-          created_at: string
-          description: string | null
-          id: string
-          image_url: string | null
-          sort_order: number
-          title: string
-          updated_at: string
-        }
-        Insert: {
-          created_at?: string
-          description?: string | null
-          id?: string
-          image_url?: string | null
-          sort_order?: number
-          title: string
-          updated_at?: string
-        }
-        Update: {
-          created_at?: string
-          description?: string | null
-          id?: string
-          image_url?: string | null
-          sort_order?: number
-          title?: string
-          updated_at?: string
-        }
-        Relationships: []
-      }
+      [_ in never]: never
     }
     Views: {
       [_ in never]: never
@@ -196,7 +23,7 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
-      gallery_category: "Nature" | "Wedding" | "Portraits" | "Events"
+      [_ in never]: never
     }
     CompositeTypes: {
       [_ in never]: never
@@ -323,8 +150,6 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {
-      gallery_category: ["Nature", "Wedding", "Portraits", "Events"],
-    },
+    Enums: {},
   },
 } as const
