@@ -14,7 +14,7 @@ const GalleryManager = () => {
 
   const load = async () => {
     setLoading(true);
-    const { data, error } = await supabase
+    const { data, error } = await (supabase as any)
       .from("gallery_images")
       .select("id,image_url,category,caption")
       .order("sort_order", { ascending: true })
@@ -32,8 +32,8 @@ const GalleryManager = () => {
     if (error) throw error;
     const { data } = supabase.storage.from("public-assets").getPublicUrl(path);
     const payload: any = { image_url: data.publicUrl, category };
-    const { error: insErr } = await (supabase
-      .from("gallery_images") as any)
+    const { error: insErr } = await (supabase as any)
+      .from("gallery_images")
       .insert([payload]);
     if (insErr) throw insErr;
   };

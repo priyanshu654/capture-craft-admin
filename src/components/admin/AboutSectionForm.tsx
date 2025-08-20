@@ -15,7 +15,7 @@ const AboutSectionForm = () => {
 
   useEffect(() => {
     const load = async () => {
-      const { data } = await supabase
+      const { data } = await (supabase as any)
         .from("about_settings")
         .select("id,bio")
         .order("updated_at", { ascending: false })
@@ -44,13 +44,13 @@ const AboutSectionForm = () => {
       let portrait_url: string | undefined;
       if (file) portrait_url = await uploadFile(file);
       if (id) {
-        const { error } = await supabase
+        const { error } = await (supabase as any)
           .from("about_settings")
           .update({ bio, ...(portrait_url ? { portrait_url } : {}) })
           .eq("id", id);
         if (error) throw error;
       } else {
-        const { error, data } = await supabase
+        const { error, data } = await (supabase as any)
           .from("about_settings")
           .insert({ bio, ...(portrait_url ? { portrait_url } : {}) })
           .select("id")
