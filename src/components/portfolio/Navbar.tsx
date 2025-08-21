@@ -8,7 +8,7 @@ const Navbar = () => {
     <header className="sticky top-0 z-40 border-b bg-background/80 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <nav className="container flex h-16 items-center justify-between">
         <a href="#home" className="font-playfair text-xl font-semibold">
-          Ava Carter
+          Manjeet Kumar
         </a>
         <div className="hidden gap-1 md:flex">
           <a href="#about" className={navItemCls}>

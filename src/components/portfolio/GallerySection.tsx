@@ -1,5 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
+import { useMemo, useState } from "react";
 import g1n from "@/assets/gallery1-nature.jpg";
 import g2n from "@/assets/gallery2-nature.jpg";
 import g1w from "@/assets/gallery1-wedding.jpg";
@@ -19,37 +18,27 @@ const fallbackItems = [
 ];
 
 const categories = ["All", "Nature", "Wedding", "Portraits", "Events"] as const;
-
 type Category = (typeof categories)[number];
 
-interface GalleryRow { image_url: string; caption: string | null; category: string; }
+type GallerySectionProps = {
+  data?: {
+    image_url: string;
+    caption?: string | null;
+    category: string;
+  }[];
+};
 
-const GallerySection = () => {
+const GallerySection = ({ data }: GallerySectionProps) => {
   const [active, setActive] = useState<Category>("All");
-  const [items, setItems] = useState<{ src: string; alt: string; category: string }[]>(fallbackItems);
 
-  useEffect(() => {
-    let mounted = true;
-    const load = async () => {
-      const { data, error } = await supabase
-        .from("gallery_images")
-        .select("image_url, caption, category")
-        .order("sort_order", { ascending: true })
-        .order("created_at", { ascending: false });
-      if (!mounted || error) return;
-      if (data && data.length > 0) {
-        setItems(
-          data.map((r: GalleryRow) => ({
-            src: r.image_url,
-            alt: r.caption || `${r.category} photo`,
-            category: r.category,
-          }))
-        );
-      }
-    };
-    load();
-    return () => { mounted = false; };
-  }, []);
+  const items =
+    data && data.length > 0
+      ? data.map((r) => ({
+          src: r.image_url,
+          alt: r.caption || `${r.category} photo`,
+          category: r.category,
+        }))
+      : fallbackItems;
 
   const filtered = useMemo(
     () => (active === "All" ? items : items.filter((i) => i.category === active)),
@@ -76,14 +65,19 @@ const GallerySection = () => {
         </div>
         <div className="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {filtered.map((img, idx) => (
-            <figure key={idx} className="overflow-hidden rounded-md border bg-card shadow-sm">
+            <figure
+              key={idx}
+              className="overflow-hidden rounded-md border bg-card shadow-sm"
+            >
               <img
                 src={img.src}
-                alt={`${img.alt} — ${img.category} photography`}
+                alt={img.alt}
                 className="aspect-video w-full object-cover transition duration-300 hover:scale-[1.02]"
                 loading="lazy"
               />
-              <figcaption className="px-3 py-2 text-xs text-muted-foreground">{img.category}</figcaption>
+              <figcaption className="px-3 py-2 text-xs text-muted-foreground">
+                {img.category}
+              </figcaption>
             </figure>
           ))}
         </div>

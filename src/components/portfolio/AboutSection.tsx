@@ -1,29 +1,18 @@
-import { useEffect, useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
 import fallbackPortrait from "@/assets/about-ava.jpg";
 
-const AboutSection = () => {
-  const [bio, setBio] = useState(
-    "I’m Ava Carter, a photographer focused on honest, editorial imagery. My work blends natural light with refined composition to tell authentic stories. I collaborate closely with clients across weddings, portraits, nature, and events to create timeless visuals with a calm, premium aesthetic."
-  );
-  const [portraitUrl, setPortraitUrl] = useState<string>(fallbackPortrait);
+type AboutSectionProps = {
+  data?: {
+    bio?: string;
+    portrait_url?: string;
+  };
+};
 
-  useEffect(() => {
-    let mounted = true;
-    const load = async () => {
-      const { data } = await supabase
-        .from("about_settings")
-        .select("bio,portrait_url")
-        .order("updated_at", { ascending: false })
-        .limit(1)
-        .maybeSingle();
-      if (!mounted || !data) return;
-      if (data.bio) setBio(data.bio);
-      if (data.portrait_url) setPortraitUrl(data.portrait_url);
-    };
-    load();
-    return () => { mounted = false; };
-  }, []);
+const AboutSection = ({ data }: AboutSectionProps) => {
+  const bio =
+    data?.bio ||
+    "I’m Manjeet Kumar, a photographer focused on honest, editorial imagery. My work blends natural light with refined composition to tell authentic stories. I collaborate closely with clients across weddings, portraits, nature, and events to create timeless visuals with a calm, premium aesthetic.";
+
+  const portraitUrl = data?.portrait_url || fallbackPortrait;
 
   return (
     <section id="about" className="border-t">
@@ -31,7 +20,7 @@ const AboutSection = () => {
         <div>
           <img
             src={portraitUrl}
-            alt="About portrait of Ava Carter"
+            alt="About portrait"
             className="w-full rounded-lg object-cover shadow-lg"
             loading="lazy"
           />

@@ -81,8 +81,8 @@ const ContactSection = () => {
         </form>
 
         <aside className="mt-6 text-sm text-muted-foreground">
-          <p>Email: hello@avacarter.com • Phone: +1 (555) 231-9876</p>
-          <p>Instagram • Behance • Pinterest</p>
+          <p>Email: photosbymanjeet@gmail.com • Phone: +91 8797899072</p>
+          <p><a href="https://www.instagram.com/photosbymanjeet/">Instagram</a> • <a href="https://www.facebook.com/share/19eoKPcRLA/">Facebook</a></p>
         </aside>
       </div>
     </section>
