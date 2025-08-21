@@ -16,7 +16,6 @@ const Auth = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
-  const [isSignUp, setIsSignUp] = useState(false);
 
   useEffect(() => {
     document.title = "Admin Login | Portfolio CMS";
@@ -57,29 +56,6 @@ const Auth = () => {
     }
   };
 
-  const handleSignUp = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-    try {
-      const { error } = await supabase.auth.signUp({
-        email,
-        password,
-        options: {
-          emailRedirectTo: `${window.location.origin}/admin`
-        }
-      });
-      if (error) throw error;
-      toast({ 
-        title: "Account created", 
-        description: "Please check your email to confirm your account." 
-      });
-    } catch (err: any) {
-      toast({ title: "Sign up failed", description: err.message, variant: "destructive" });
-    } finally {
-      setLoading(false);
-    }
-  };
-
 
   return (
     <main className="min-h-screen bg-background">
@@ -87,19 +63,14 @@ const Auth = () => {
         <h1 className="sr-only">Admin Login</h1>
         <div className="mx-auto max-w-md rounded-lg border bg-card p-6 shadow-sm">
           <div className="mb-6 text-center">
-            <p className="font-playfair text-2xl">
-              {isSignUp ? "Create Admin Account" : "Admin Login"}
-            </p>
+            <p className="font-playfair text-2xl">Admin Login</p>
             <p className="mt-2 text-sm text-muted-foreground">
-              {isSignUp 
-                ? "Create your admin account to manage the portfolio"
-                : "Sign in to manage your portfolio content"
-              }
+              Sign in to manage your portfolio content
             </p>
           </div>
 
           <div className="w-full">
-            <form onSubmit={isSignUp ? handleSignUp : handleSignIn} className="grid gap-4">
+            <form onSubmit={handleSignIn} className="grid gap-4">
               <div className="grid gap-2">
                 <Label htmlFor="email">Email</Label>
                 <Input
@@ -121,29 +92,13 @@ const Auth = () => {
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="••••••••"
                   required
-                  autoComplete={isSignUp ? "new-password" : "current-password"}
+                  autoComplete="current-password"
                 />
               </div>
               <Button type="submit" className="mt-2" disabled={loading}>
-                {loading 
-                  ? (isSignUp ? "Creating Account..." : "Signing in...") 
-                  : (isSignUp ? "Create Account" : "Sign In")
-                }
+                {loading ? "Signing in..." : "Sign In"}
               </Button>
             </form>
-            
-            <div className="mt-4 text-center">
-              <button
-                type="button"
-                onClick={() => setIsSignUp(!isSignUp)}
-                className="text-sm text-muted-foreground underline underline-offset-4 hover:text-foreground"
-              >
-                {isSignUp 
-                  ? "Already have an account? Sign in" 
-                  : "Need to create an admin account? Sign up"
-                }
-              </button>
-            </div>
           </div>
 
           <p className="mt-6 text-center text-sm text-muted-foreground">
